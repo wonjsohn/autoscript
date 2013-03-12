@@ -44,13 +44,14 @@ class Spindle
     end
 
     def connect_parameters
+      @@muscle_len ||= TriggeredInput.new 1.1, "lce" ,[50, 9]         #"32'h3F8C_CCCD"
       @@gamma_dynamic ||= TriggeredInput.new 80, "gamma_dynamic", [50,4]
       @@gamma_static ||= TriggeredInput.new 80, "gamma_static", [50,5]
 
       @@bdamp_1 ||= TriggeredInput.new 0.2356, "BDAMP_1", [50,15]           #"32'h3E71_4120"
       @@bdamp_2 ||= TriggeredInput.new 0.0362, "BDAMP_2", [50,14]           #"32'h3D14_4674"
       @@bdamp_chain ||= TriggeredInput.new 0.0132, "BDAMP_chain", [50,13]   #"32'h3C58_44D0"
-      @@muscle_len ||= TriggeredInput.new 1.1, "lce" ,[50, 9]         #"32'h3F8C_CCCD"
+
 
       @@gamma_dynamic.connect_to self
       @@gamma_static.connect_to self

@@ -66,7 +66,7 @@ class TriggeredInput
     def put_instance_definition
         reset_string = @reset_value 
         reset_string = format_data_type(@reset_value) unless @reset_value == @id.join
-        
+    
         instance = %{
         // Triggered Input #{@id.join} Instance Definition (#{@name})
         always @ (posedge ep#{@trigger_address[0]}trig[#{@trigger_address[1]}] or posedge reset_global)

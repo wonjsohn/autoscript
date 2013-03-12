@@ -4,8 +4,8 @@
 
 class Synapse
 
-    attr_reader :id
-    attr_accessor :presynaptic_id, :postsynaptic_id, :ltp_id, :ltd_id, :p_delta_id
+    attr_reader :id, :syn_gain_id
+    attr_accessor :presynaptic_id, :postsynaptic_id, :ltp_id, :ltd_id, :p_delta_id, :syn_gain_id
 
     def initialize( presynaptic_id, postsynaptic_id )
         $synapses ||= [] 
@@ -16,7 +16,8 @@ class Synapse
         @postsynaptic_id = postsynaptic_id
         @ltp_id = ["dummy_input", 999]
         @ltd_id = ["dummy_input", 999]
-        @p_delta_id = ["dummy_input", 999]     
+        @p_delta_id = ["dummy_input", 999]  
+        @syn_gain_id =["dummy_input", 999]     
         
         connect_plasticity
         
@@ -34,6 +35,7 @@ class Synapse
         @ltp_id = source.id if source.name == "ltp"
         @ltd_id = source.id if source.name == "ltd"
         @p_delta_id = source.id if source.name == "p_delta"
+        @syn_gain_id = source.id if source.name == "syn_gain"
       else
         raise "cannot connect #{source} to #{self}"
       end
@@ -44,10 +46,12 @@ class Synapse
       @@ltp ||= TriggeredInput.new 0, "ltp", [50,12]
       @@ltd ||= TriggeredInput.new 0, "ltd", [50,11]
       @@p_delta ||= TriggeredInput.new 0, "p_delta", [50, 10]
+      @@syn_gain ||= TriggeredInput.new 1.0, "syn_gain", [50, 3]
       
       @@ltp.connect_to self
       @@ltd.connect_to self
       @@p_delta.connect_to self
+      @@syn_gain.connect_to self
     
     end
 
@@ -77,6 +81,11 @@ class Synapse
             .ltd(#{@ltd_id.join}),                        // long term depression weight
             .p_delta(#{@p_delta_id.join})                 // chance for decay 
         );
+
+	wire [31:0] i_EPSC_#{@id.join};
+ 	unsigned_mult32 #{@id.join}_gain(.out(i_EPSC_#{@id.join}), .a(each_I_#{@id.join}), .b(#{@syn_gain_id.join}));
+   
+
         }
         puts instance
     end

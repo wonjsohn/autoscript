@@ -58,7 +58,7 @@ class Neuron
         @input_id.each do |id|
             (block_type,index) = id
             i_in += id.join if ["triggered_input", "static_input"].include? block_type
-            i_in += "each_I_#{id.join}" if block_type == "synapse"
+            i_in += "i_EPSC_#{id.join}" if block_type == "synapse"
             i_in += "fixed_#{@name}_#{id.join}" if block_type == "spindle"
             i_in += " + "
         end

@@ -35,7 +35,7 @@ class Lce
             .reset(reset_global),               // reset the waveform
             .pipe_clk(ti_clk),                  // target interface clock from opalkelly interface
             .pipe_in_write(pipe_in_write),      // write enable signal from opalkelly pipe in
-            .data_from_trig(triggered_input5),	// data from one of ep50 channel
+            .data_from_trig(triggered_input0),	// data from one of ep50 channel
             .is_from_trigger(is_from_trigger),
             .pipe_in_data(pipe_in_data),        // waveform data from opalkelly pipe in
             .pop_clk(sim_clk),                  // trigger next waveform sample every 1ms

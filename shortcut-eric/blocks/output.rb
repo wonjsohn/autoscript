@@ -69,7 +69,7 @@ class Output
         @wire_out_index = -1
         instance = %{
         // Output and OpalKelly Interface Instance Definitions
-        assign led = 0;
+        //assign led = 0;
         assign reset_global = ep00wire[0];
         assign is_from_trigger = ep00wire[1];
         okWireOR # (.N(#{@wire_count})) wireOR (ok2, ok2x);
@@ -92,7 +92,7 @@ class Output
                 instance += add_wire_outs "v", input_id
                 instance += add_wire_outs "population", input_id
             elsif block_type == "synapse"
-                instance += add_wire_outs "I", input_id
+                instance += add_wire_outs "i_EPSC", input_id
             elsif block_type == "spike_counter"
                 instance += add_wire_outs "spike_count", input_id
             elsif block_type == "waveform"
@@ -115,6 +115,7 @@ class Output
     
     def add_wire_outs(datain_prefix, input_id)
         datain = "#{datain_prefix}_#{input_id.join}"
+	datain = "#{input_id[1]}" if datain_prefix == "synapse"
         datain = "#{datain_prefix}_neuron#{input_id[1]}" if datain_prefix == "spike_count"
         datain = "#{input_id.join}" if datain_prefix == ""
         return %{

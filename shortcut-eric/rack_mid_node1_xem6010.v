@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 // rack_mid_node1_xem6010.v
-// Generated on Thu Mar 07 16:13:17 -0800 2013
+// Generated on Mon Mar 11 16:55:35 -0700 2013
 
     module rack_mid_node1_xem6010(
 	    input  wire [7:0]  hi_in,
@@ -85,7 +85,11 @@
         
 
         // Triggered Input triggered_input3 Wire Definitions
-        reg [31:0] triggered_input3;    // Triggered input sent from USB (clk_divider)       
+        reg [31:0] triggered_input3;    // Triggered input sent from USB (syn_gain)       
+        
+
+        // Triggered Input triggered_input4 Wire Definitions
+        reg [31:0] triggered_input4;    // Triggered input sent from USB (clk_divider)       
         
 
         // Spike Counter spike_counter0 Wire Definitions
@@ -135,6 +139,11 @@
             .ltd(triggered_input1),                        // long term depression weight
             .p_delta(triggered_input2)                 // chance for decay 
         );
+
+	wire [31:0] i_EPSC_synapse0;
+ 	unsigned_mult32 synapse0_gain(.out(i_EPSC_synapse0), .a(each_I_synapse0), .b(triggered_input3));
+   
+
         
 
         // Triggered Input triggered_input0 Instance Definition (ltp)
@@ -161,12 +170,20 @@
             triggered_input2 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input3 Instance Definition (clk_divider)
-        always @ (posedge ep50trig[7] or posedge reset_global)
+        // Triggered Input triggered_input3 Instance Definition (syn_gain)
+        always @ (posedge ep50trig[3] or posedge reset_global)
         if (reset_global)
-            triggered_input3 <= triggered_input3;         //reset to triggered_input3      
+            triggered_input3 <= 32'd1024;         //reset to 1.0      
         else
             triggered_input3 <= {ep02wire, ep01wire};      
+        
+
+        // Triggered Input triggered_input4 Instance Definition (clk_divider)
+        always @ (posedge ep50trig[7] or posedge reset_global)
+        if (reset_global)
+            triggered_input4 <= triggered_input4;         //reset to triggered_input4      
+        else
+            triggered_input4 <= {ep02wire, ep01wire};      
         
 
         // Spike Counter spike_counter0 Instance Definition
@@ -196,7 +213,7 @@
     assign spikeout14 = 1'b0;
 
         // Output and OpalKelly Interface Instance Definitions
-        assign led = 0;
+        //assign led = 0;
         assign reset_global = ep00wire[0];
         assign is_from_trigger = ep00wire[1];
         okWireOR # (.N(8)) wireOR (ok2, ok2x);
@@ -220,14 +237,14 @@
         okWireOut wo24 (    .ep_datain(spike_count_neuron0[15:0]),  .ok1(ok1),  .ok2(ok2x[4*17 +: 17]), .ep_addr(8'h24)    );
         okWireOut wo25 (    .ep_datain(spike_count_neuron0[31:16]),  .ok1(ok1),  .ok2(ok2x[5*17 +: 17]), .ep_addr(8'h25)   );    
         
-        okWireOut wo26 (    .ep_datain(I_synapse0[15:0]),  .ok1(ok1),  .ok2(ok2x[6*17 +: 17]), .ep_addr(8'h26)    );
-        okWireOut wo27 (    .ep_datain(I_synapse0[31:16]),  .ok1(ok1),  .ok2(ok2x[7*17 +: 17]), .ep_addr(8'h27)   );    
+        okWireOut wo26 (    .ep_datain(i_EPSC_synapse0[15:0]),  .ok1(ok1),  .ok2(ok2x[6*17 +: 17]), .ep_addr(8'h26)    );
+        okWireOut wo27 (    .ep_datain(i_EPSC_synapse0[31:16]),  .ok1(ok1),  .ok2(ok2x[7*17 +: 17]), .ep_addr(8'h27)   );    
         
 
         // Clock Generator clk_gen0 Instance Definition
         gen_clk clocks(
             .rawclk(clk1),
-            .half_cnt(triggered_input3),
+            .half_cnt(triggered_input4),
             .clk_out1(neuron_clk),
             .clk_out2(sim_clk),
             .clk_out3(spindle_clk),
@@ -240,7 +257,7 @@
         izneuron neuron0(
             .clk(neuron_clk),               // neuron clock (128 cycles per 1ms simulation time)
             .reset(reset_global),           // reset to initial conditions
-            .I_in(  each_I_synapse0 ),          // input current from synapse
+            .I_in(  i_EPSC_synapse0 ),          // input current from synapse
             .v_out(v_neuron0),               // membrane potential
             .spike(spike_neuron0),           // spike sample
             .each_spike(each_spike_neuron0), // raw spikes
@@ -248,4 +265,15 @@
         );
         
 /////////////////////// END INSTANCE DEFINITIONS //////////////////////////
+
+	// ** LEDs
+    assign led[0] = ~reset_global;
+    assign led[1] = ~0;
+    assign led[2] = ~0;
+    assign led[3] = ~0;
+    assign led[4] = ~0;
+    assign led[5] = ~0;
+    assign led[6] = ~neuron_clk; // 
+    assign led[7] = ~sim_clk; // clock
+    
 endmodule

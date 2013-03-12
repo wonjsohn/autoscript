@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 // rack_test_xem6010.v
-// Generated on Thu Mar 07 16:28:48 -0800 2013
+// Generated on Mon Mar 11 18:34:34 -0700 2013
 
     module rack_test_xem6010(
 	    input  wire [7:0]  hi_in,
@@ -65,6 +65,8 @@
         assign i2c_scl = 1'bz;
         assign hi_muxsel = 1'b0;
     
+
+      
 /////////////////////// BEGIN WIRE DEFINITIONS ////////////////////////////
 
         // Spindle spindle0 Wire Definitions
@@ -76,27 +78,27 @@
         
 
         // Triggered Input triggered_input0 Wire Definitions
-        reg [31:0] triggered_input0;    // Triggered input sent from USB (gamma_dynamic)       
+        reg [31:0] triggered_input0;    // Triggered input sent from USB (lce)       
         
 
         // Triggered Input triggered_input1 Wire Definitions
-        reg [31:0] triggered_input1;    // Triggered input sent from USB (gamma_static)       
+        reg [31:0] triggered_input1;    // Triggered input sent from USB (gamma_dynamic)       
         
 
         // Triggered Input triggered_input2 Wire Definitions
-        reg [31:0] triggered_input2;    // Triggered input sent from USB (BDAMP_1)       
+        reg [31:0] triggered_input2;    // Triggered input sent from USB (gamma_static)       
         
 
         // Triggered Input triggered_input3 Wire Definitions
-        reg [31:0] triggered_input3;    // Triggered input sent from USB (BDAMP_2)       
+        reg [31:0] triggered_input3;    // Triggered input sent from USB (BDAMP_1)       
         
 
         // Triggered Input triggered_input4 Wire Definitions
-        reg [31:0] triggered_input4;    // Triggered input sent from USB (BDAMP_chain)       
+        reg [31:0] triggered_input4;    // Triggered input sent from USB (BDAMP_2)       
         
 
         // Triggered Input triggered_input5 Wire Definitions
-        reg [31:0] triggered_input5;    // Triggered input sent from USB (lce)       
+        reg [31:0] triggered_input5;    // Triggered input sent from USB (BDAMP_chain)       
         
 
         // Triggered Input triggered_input6 Wire Definitions
@@ -143,8 +145,8 @@
 
         // Spindle spindle0 Instance Definition
         spindle spindle0 (
-            .gamma_dyn(triggered_input0),   // spindle dynamic gamma input (pps)
-            .gamma_sta(triggered_input1),    // spindle static gamma input (pps)
+            .gamma_dyn(triggered_input1),   // spindle dynamic gamma input (pps)
+            .gamma_sta(triggered_input2),    // spindle static gamma input (pps)
             .lce(mixed_input0),                   // length of contractile element (muscle length)
             .clk(spindle_clk),                  // spindle clock (3 cycles per 1ms simulation time) 
             .reset(reset_global),               // reset the spindle
@@ -152,9 +154,9 @@
             .out1(),
             .out2(II_spindle0),                   // II afferent (pps)
             .out3(Ia_spindle0),                   // Ia afferent (pps)
-            .BDAMP_1(triggered_input2),           // Damping coefficient for bag1 fiber
-            .BDAMP_2(triggered_input3),           // Damping coefficient for bag2 fiber
-            .BDAMP_chain(triggered_input4)    // Damping coefficient for chain fiber
+            .BDAMP_1(triggered_input3),           // Damping coefficient for bag1 fiber
+            .BDAMP_2(triggered_input4),           // Damping coefficient for bag2 fiber
+            .BDAMP_chain(triggered_input5)    // Damping coefficient for chain fiber
         );
         
         // Ia Afferent datatype conversion (floating point -> integer -> fixed point)
@@ -166,50 +168,50 @@
         assign fixed_Ia_spindle0 = int_Ia_spindle0 <<< 6;
         
 
-        // Triggered Input triggered_input0 Instance Definition (gamma_dynamic)
-        always @ (posedge ep50trig[4] or posedge reset_global)
+        // Triggered Input triggered_input0 Instance Definition (lce)
+        always @ (posedge ep50trig[9] or posedge reset_global)
         if (reset_global)
-            triggered_input0 <= 32'h42a00000;         //reset to 80      
+            triggered_input0 <= 32'h3f8ccccd;         //reset to 1.1      
         else
             triggered_input0 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input1 Instance Definition (gamma_static)
-        always @ (posedge ep50trig[5] or posedge reset_global)
+        // Triggered Input triggered_input1 Instance Definition (gamma_dynamic)
+        always @ (posedge ep50trig[4] or posedge reset_global)
         if (reset_global)
             triggered_input1 <= 32'h42a00000;         //reset to 80      
         else
             triggered_input1 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input2 Instance Definition (BDAMP_1)
-        always @ (posedge ep50trig[15] or posedge reset_global)
+        // Triggered Input triggered_input2 Instance Definition (gamma_static)
+        always @ (posedge ep50trig[5] or posedge reset_global)
         if (reset_global)
-            triggered_input2 <= 32'h3e714120;         //reset to 0.2356      
+            triggered_input2 <= 32'h42a00000;         //reset to 80      
         else
             triggered_input2 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input3 Instance Definition (BDAMP_2)
-        always @ (posedge ep50trig[14] or posedge reset_global)
+        // Triggered Input triggered_input3 Instance Definition (BDAMP_1)
+        always @ (posedge ep50trig[15] or posedge reset_global)
         if (reset_global)
-            triggered_input3 <= 32'h3d144674;         //reset to 0.0362      
+            triggered_input3 <= 32'h3e714120;         //reset to 0.2356      
         else
             triggered_input3 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input4 Instance Definition (BDAMP_chain)
-        always @ (posedge ep50trig[13] or posedge reset_global)
+        // Triggered Input triggered_input4 Instance Definition (BDAMP_2)
+        always @ (posedge ep50trig[14] or posedge reset_global)
         if (reset_global)
-            triggered_input4 <= 32'h3c5844d0;         //reset to 0.0132      
+            triggered_input4 <= 32'h3d144674;         //reset to 0.0362      
         else
             triggered_input4 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input5 Instance Definition (lce)
-        always @ (posedge ep50trig[9] or posedge reset_global)
+        // Triggered Input triggered_input5 Instance Definition (BDAMP_chain)
+        always @ (posedge ep50trig[13] or posedge reset_global)
         if (reset_global)
-            triggered_input5 <= 32'h3f8ccccd;         //reset to 1.1      
+            triggered_input5 <= 32'h3c5844d0;         //reset to 0.0132      
         else
             triggered_input5 <= {ep02wire, ep01wire};      
         
@@ -238,7 +240,7 @@
             .reset(reset_global),               // reset the waveform
             .pipe_clk(ti_clk),                  // target interface clock from opalkelly interface
             .pipe_in_write(pipe_in_write),      // write enable signal from opalkelly pipe in
-            .data_from_trig(triggered_input5),	// data from one of ep50 channel
+            .data_from_trig(triggered_input0),	// data from one of ep50 channel
             .is_from_trigger(is_from_trigger),
             .pipe_in_data(pipe_in_data),        // waveform data from opalkelly pipe in
             .pop_clk(sim_clk),                  // trigger next waveform sample every 1ms
@@ -262,7 +264,7 @@
     assign spikeout14 = 1'b0;
 
         // Output and OpalKelly Interface Instance Definitions
-        assign led = 0;
+        //assign led = 0;
         assign reset_global = ep00wire[0];
         assign is_from_trigger = ep00wire[1];
         okWireOR # (.N(7)) wireOR (ok2, ok2x);
@@ -314,4 +316,15 @@
         );
         
 /////////////////////// END INSTANCE DEFINITIONS //////////////////////////
+
+	// ** LEDs
+    assign led[0] = ~reset_global;
+    assign led[1] = ~0;
+    assign led[2] = ~0;
+    assign led[3] = ~0;
+    assign led[4] = ~0;
+    assign led[5] = ~0;
+    assign led[6] = ~neuron_clk; // 
+    assign led[7] = ~sim_clk; // clock
+    
 endmodule

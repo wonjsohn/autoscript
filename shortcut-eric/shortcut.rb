@@ -38,7 +38,7 @@ def generate_verilog
         block.put_instance_definition
     end
     puts "/////////////////////// END INSTANCE DEFINITIONS //////////////////////////"
-    
+    generate_led
     puts "endmodule"
 end
 
@@ -111,7 +111,24 @@ def generate_opalkelly_header(modulename)
         assign i2c_sda = 1'bz;
         assign i2c_scl = 1'bz;
         assign hi_muxsel = 1'b0;
-    }
+    
+
+      }
     puts header
     #`
+end
+
+def generate_led
+    instance = %{
+	// ** LEDs
+    assign led[0] = ~reset_global;
+    assign led[1] = ~0;
+    assign led[2] = ~0;
+    assign led[3] = ~0;
+    assign led[4] = ~0;
+    assign led[5] = ~0;
+    assign led[6] = ~neuron_clk; // 
+    assign led[7] = ~sim_clk; // clock
+    }
+    puts instance
 end

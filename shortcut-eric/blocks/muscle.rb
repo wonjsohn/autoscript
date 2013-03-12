@@ -42,8 +42,13 @@ class Muscle
 
 
     def connect_parameters
+	@@muscle_len ||= TriggeredInput.new 1.1, "lce" ,[50, 9]         #"32'h3F8C_CCCD"
         @@tau ||= TriggeredInput.new 0.03, "tau", [50,2]
-        @@tau.connect_to self
+	
+        
+	
+	@@muscle_len.connect_to self
+	@@tau.connect_to self
     end
 
     def put_wire_definitions
