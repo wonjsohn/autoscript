@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 // rack_mn_muscle_xem6010.v
-// Generated on Mon Mar 11 19:07:32 -0700 2013
+// Generated on Tue Mar 12 15:55:13 -0700 2013
 
     module rack_mn_muscle_xem6010(
 	    input  wire [7:0]  hi_in,
@@ -264,7 +264,7 @@
         // Output and OpalKelly Interface Instance Definitions
         //assign led = 0;
         assign reset_global = ep00wire[0];
-        assign is_from_trigger = ep00wire[1];
+        assign is_from_trigger = ~ep00wire[1];
         okWireOR # (.N(13)) wireOR (ok2, ok2x);
         okHost okHI(
             .hi_in(hi_in),  .hi_out(hi_out),    .hi_inout(hi_inout),    .hi_aa(hi_aa),
@@ -292,8 +292,8 @@
         okWireOut wo26 (    .ep_datain(spike_count_neuron0[15:0]),  .ok1(ok1),  .ok2(ok2x[7*17 +: 17]), .ep_addr(8'h26)    );
         okWireOut wo27 (    .ep_datain(spike_count_neuron0[31:16]),  .ok1(ok1),  .ok2(ok2x[8*17 +: 17]), .ep_addr(8'h27)   );    
         
-        okWireOut wo28 (    .ep_datain(i_EPSC_synapse0[15:0]),  .ok1(ok1),  .ok2(ok2x[9*17 +: 17]), .ep_addr(8'h28)    );
-        okWireOut wo29 (    .ep_datain(i_EPSC_synapse0[31:16]),  .ok1(ok1),  .ok2(ok2x[10*17 +: 17]), .ep_addr(8'h29)   );    
+        okWireOut wo28 (    .ep_datain(I_synapse0[15:0]),  .ok1(ok1),  .ok2(ok2x[9*17 +: 17]), .ep_addr(8'h28)    );
+        okWireOut wo29 (    .ep_datain(I_synapse0[31:16]),  .ok1(ok1),  .ok2(ok2x[10*17 +: 17]), .ep_addr(8'h29)   );    
         
         okWireOut wo2a (    .ep_datain(total_force_out_muscle0[15:0]),  .ok1(ok1),  .ok2(ok2x[11*17 +: 17]), .ep_addr(8'h2a)    );
         okWireOut wo2b (    .ep_datain(total_force_out_muscle0[31:16]),  .ok1(ok1),  .ok2(ok2x[12*17 +: 17]), .ep_addr(8'h2b)   );    
@@ -340,7 +340,7 @@
 
 	// ** LEDs
     assign led[0] = ~reset_global;
-    assign led[1] = ~0;
+    assign led[1] = ~spikein1;
     assign led[2] = ~0;
     assign led[3] = ~0;
     assign led[4] = ~0;

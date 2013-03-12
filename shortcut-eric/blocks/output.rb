@@ -71,7 +71,7 @@ class Output
         // Output and OpalKelly Interface Instance Definitions
         //assign led = 0;
         assign reset_global = ep00wire[0];
-        assign is_from_trigger = ep00wire[1];
+        assign is_from_trigger = ~ep00wire[1];
         okWireOR # (.N(#{@wire_count})) wireOR (ok2, ok2x);
         okHost okHI(
             .hi_in(hi_in),  .hi_out(hi_out),    .hi_inout(hi_inout),    .hi_aa(hi_aa),
@@ -92,7 +92,7 @@ class Output
                 instance += add_wire_outs "v", input_id
                 instance += add_wire_outs "population", input_id
             elsif block_type == "synapse"
-                instance += add_wire_outs "i_EPSC", input_id
+                instance += add_wire_outs "I", input_id
             elsif block_type == "spike_counter"
                 instance += add_wire_outs "spike_count", input_id
             elsif block_type == "waveform"

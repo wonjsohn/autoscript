@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 // rack_test_xem6010.v
-// Generated on Mon Mar 11 18:34:34 -0700 2013
+// Generated on Tue Mar 12 15:54:39 -0700 2013
 
     module rack_test_xem6010(
 	    input  wire [7:0]  hi_in,
@@ -266,7 +266,7 @@
         // Output and OpalKelly Interface Instance Definitions
         //assign led = 0;
         assign reset_global = ep00wire[0];
-        assign is_from_trigger = ep00wire[1];
+        assign is_from_trigger = ~ep00wire[1];
         okWireOR # (.N(7)) wireOR (ok2, ok2x);
         okHost okHI(
             .hi_in(hi_in),  .hi_out(hi_out),    .hi_inout(hi_inout),    .hi_aa(hi_aa),
@@ -319,8 +319,8 @@
 
 	// ** LEDs
     assign led[0] = ~reset_global;
-    assign led[1] = ~0;
-    assign led[2] = ~0;
+    assign led[1] = ~spikein1;
+    assign led[2] = ~spikeout1;
     assign led[3] = ~0;
     assign led[4] = ~0;
     assign led[5] = ~0;

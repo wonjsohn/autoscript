@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 // rack_mid_node1_xem6010.v
-// Generated on Mon Mar 11 16:55:35 -0700 2013
+// Generated on Tue Mar 12 15:55:02 -0700 2013
 
     module rack_mid_node1_xem6010(
 	    input  wire [7:0]  hi_in,
@@ -65,6 +65,8 @@
         assign i2c_scl = 1'bz;
         assign hi_muxsel = 1'b0;
     
+
+      
 /////////////////////// BEGIN WIRE DEFINITIONS ////////////////////////////
 
         // Synapse synapse0 Wire Definitions        
@@ -215,7 +217,7 @@
         // Output and OpalKelly Interface Instance Definitions
         //assign led = 0;
         assign reset_global = ep00wire[0];
-        assign is_from_trigger = ep00wire[1];
+        assign is_from_trigger = ~ep00wire[1];
         okWireOR # (.N(8)) wireOR (ok2, ok2x);
         okHost okHI(
             .hi_in(hi_in),  .hi_out(hi_out),    .hi_inout(hi_inout),    .hi_aa(hi_aa),
@@ -237,8 +239,8 @@
         okWireOut wo24 (    .ep_datain(spike_count_neuron0[15:0]),  .ok1(ok1),  .ok2(ok2x[4*17 +: 17]), .ep_addr(8'h24)    );
         okWireOut wo25 (    .ep_datain(spike_count_neuron0[31:16]),  .ok1(ok1),  .ok2(ok2x[5*17 +: 17]), .ep_addr(8'h25)   );    
         
-        okWireOut wo26 (    .ep_datain(i_EPSC_synapse0[15:0]),  .ok1(ok1),  .ok2(ok2x[6*17 +: 17]), .ep_addr(8'h26)    );
-        okWireOut wo27 (    .ep_datain(i_EPSC_synapse0[31:16]),  .ok1(ok1),  .ok2(ok2x[7*17 +: 17]), .ep_addr(8'h27)   );    
+        okWireOut wo26 (    .ep_datain(I_synapse0[15:0]),  .ok1(ok1),  .ok2(ok2x[6*17 +: 17]), .ep_addr(8'h26)    );
+        okWireOut wo27 (    .ep_datain(I_synapse0[31:16]),  .ok1(ok1),  .ok2(ok2x[7*17 +: 17]), .ep_addr(8'h27)   );    
         
 
         // Clock Generator clk_gen0 Instance Definition
@@ -268,8 +270,8 @@
 
 	// ** LEDs
     assign led[0] = ~reset_global;
-    assign led[1] = ~0;
-    assign led[2] = ~0;
+    assign led[1] = ~spikein1;
+    assign led[2] = ~spikeout1;
     assign led[3] = ~0;
     assign led[4] = ~0;
     assign led[5] = ~0;
