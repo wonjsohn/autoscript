@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 // rack_test_xem6010.v
-// Generated on Tue Mar 12 15:54:39 -0700 2013
+// Generated on Wed Mar 13 14:57:46 -0700 2013
 
     module rack_test_xem6010(
 	    input  wire [7:0]  hi_in,
@@ -102,7 +102,11 @@
         
 
         // Triggered Input triggered_input6 Wire Definitions
-        reg [31:0] triggered_input6;    // Triggered input sent from USB (clk_divider)       
+        reg [31:0] triggered_input6;    // Triggered input sent from USB (spindle_gain)       
+        
+
+        // Triggered Input triggered_input7 Wire Definitions
+        reg [31:0] triggered_input7;    // Triggered input sent from USB (clk_divider)       
         
 
         // Spike Counter spike_counter0 Wire Definitions
@@ -159,9 +163,13 @@
             .BDAMP_chain(triggered_input5)    // Damping coefficient for chain fiber
         );
         
+	//gain control for spindle output rate 
+	wire [31:0] Ia_gain_controlled_spindle0;
+	mult mult_spindle0(.x(Ia_spindle0), .y(triggered_input6), .out(Ia_gain_controlled_spindle0));
+
         // Ia Afferent datatype conversion (floating point -> integer -> fixed point)
         floor   ia_spindle0_float_to_int(
-            .in(Ia_spindle0),
+            .in(Ia_gain_controlled_spindle0),
             .out(int_Ia_spindle0)
         );
         
@@ -216,12 +224,20 @@
             triggered_input5 <= {ep02wire, ep01wire};      
         
 
-        // Triggered Input triggered_input6 Instance Definition (clk_divider)
-        always @ (posedge ep50trig[7] or posedge reset_global)
+        // Triggered Input triggered_input6 Instance Definition (spindle_gain)
+        always @ (posedge ep50trig[1] or posedge reset_global)
         if (reset_global)
-            triggered_input6 <= triggered_input6;         //reset to triggered_input6      
+            triggered_input6 <= 32'h3f800000;         //reset to 1.0      
         else
             triggered_input6 <= {ep02wire, ep01wire};      
+        
+
+        // Triggered Input triggered_input7 Instance Definition (clk_divider)
+        always @ (posedge ep50trig[7] or posedge reset_global)
+        if (reset_global)
+            triggered_input7 <= triggered_input7;         //reset to triggered_input7      
+        else
+            triggered_input7 <= {ep02wire, ep01wire};      
         
 
         // Spike Counter spike_counter0 Instance Definition
@@ -295,7 +311,7 @@
         // Clock Generator clk_gen0 Instance Definition
         gen_clk clocks(
             .rawclk(clk1),
-            .half_cnt(triggered_input6),
+            .half_cnt(triggered_input7),
             .clk_out1(neuron_clk),
             .clk_out2(sim_clk),
             .clk_out3(spindle_clk),
@@ -319,8 +335,8 @@
 
 	// ** LEDs
     assign led[0] = ~reset_global;
-    assign led[1] = ~spikein1;
-    assign led[2] = ~spikeout1;
+    assign led[1] = ~0;
+    assign led[2] = ~0;
     assign led[3] = ~0;
     assign led[4] = ~0;
     assign led[5] = ~0;

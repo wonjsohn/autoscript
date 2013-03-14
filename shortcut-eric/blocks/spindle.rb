@@ -18,6 +18,7 @@ class Spindle
         @BDAMP_1_id = ["dummy_triggered_input", 999]
         @BDAMP_2_id = ["dummy_triggered_input", 999]
         @BDAMP_chain_id = ["dummy_triggered_input", 999]
+        @spindle_gain_id = ["dummy_triggered_input", 999]
         
         connect_parameters
         
@@ -36,6 +37,7 @@ class Spindle
             @BDAMP_1_id = source.id if source.name == "BDAMP_1"
             @BDAMP_2_id = source.id if source.name == "BDAMP_2"
             @BDAMP_chain_id = source.id if source.name == "BDAMP_chain"
+	    @spindle_gain_id = source.id if source.name == "spindle_gain"
         elsif ["mixed_input"].include? block_type
             @lce_id = source.id
         else
@@ -51,6 +53,7 @@ class Spindle
       @@bdamp_1 ||= TriggeredInput.new 0.2356, "BDAMP_1", [50,15]           #"32'h3E71_4120"
       @@bdamp_2 ||= TriggeredInput.new 0.0362, "BDAMP_2", [50,14]           #"32'h3D14_4674"
       @@bdamp_chain ||= TriggeredInput.new 0.0132, "BDAMP_chain", [50,13]   #"32'h3C58_44D0"
+      @@spindle_gain ||= TriggeredInput.new 1.00, "spindle_gain", [50,1]   
 
 
       @@gamma_dynamic.connect_to self
@@ -59,6 +62,7 @@ class Spindle
       @@bdamp_2.connect_to self
       @@bdamp_chain.connect_to self
       @@muscle_len.connect_to self
+      @@spindle_gain.connect_to self
     end
     
     def put_wire_definitions
@@ -91,9 +95,13 @@ class Spindle
             .BDAMP_chain(#{@BDAMP_chain_id.join})    // Damping coefficient for chain fiber
         );
         
+	//gain control for spindle output rate 
+	wire [31:0] Ia_gain_controlled_#{@id.join};
+	mult mult_#{@id.join}(.x(Ia_#{@id.join}), .y(#{@spindle_gain_id.join}), .out(Ia_gain_controlled_#{@id.join}));
+
         // Ia Afferent datatype conversion (floating point -> integer -> fixed point)
         floor   ia_#{@id.join}_float_to_int(
-            .in(Ia_#{@id.join}),
+            .in(Ia_gain_controlled_#{@id.join}),
             .out(int_Ia_#{@id.join})
         );
         
